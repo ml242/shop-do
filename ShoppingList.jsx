@@ -1,13 +1,11 @@
 ShoppingList = React.createClass({
-    
-    getInitialState() {
-        return {
-            shoppingList: []
-        }
-    },
 
-    fetchFakeData() {
-        return {    
+    mixins: [ReactMeteorData],
+
+    // Loads items from the shopping collection and puts them on this.data.shoppingList
+
+    getMeteorData() {
+        return {
             shoppingList: [
                 { _id: 1, text: "This is item 1" },
                 { _id: 2, text: "This is item 2" },
@@ -15,18 +13,19 @@ ShoppingList = React.createClass({
             ]
         }
     },
-    
-    getShoppingList() {
-        //TODO: fetch real data from server.
-        this.setState(this.fetchFakeData());
+
+    getInitialState() {
+        return {
+            shoppingList: []
+        }
     },
 
     componentDidMount() {
-        this.getShoppingList();
+
     },
 
     renderItems() {
-        return this.state.shoppingList.map((item) => {
+        return this.data.shoppingList.map((item) => {
             return <Item key={item._id} item={item} />;
         });
     },
@@ -34,7 +33,7 @@ ShoppingList = React.createClass({
     render() {
         return (
             <ul className="shopping-list">
-                {this.renderItems()}
+                { this.renderItems()}
             </ul>
         );
     }

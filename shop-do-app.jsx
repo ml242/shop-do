@@ -25,6 +25,7 @@ App = React.createClass({
                 <div>
                     <AccountsUIWrapper />
                     <ShoppingList userId={this.data.currentUser._id} />
+                    <KijijiSearchFeature />
                 </div>
             )
         } else {

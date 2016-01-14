@@ -2,6 +2,8 @@
  * Created by mattlucas on 1/11/16.
  */
 
+BigList = new Meteor.Collection('BigList')
+
 App = React.createClass({
 
     mixins: [ReactMeteorData],

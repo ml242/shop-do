@@ -5,7 +5,7 @@ ShoppingList = React.createClass({
     // Loads items from the shopping collection and puts them on this.data.shoppingList
     getMeteorData() {
         return {
-            shoppingList: BigList.find({}).fetch()
+            shoppingList: BigList.find({ userId: this.props.userId }).fetch()
         }
     },
 

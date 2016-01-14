@@ -7,7 +7,7 @@ Item = React.createClass({
     },
     render() {
         return (
-            <li>{this.props.item.text}</li>
+            <li><span>{this.props.item.search}</span></li>
         );
     }
 });

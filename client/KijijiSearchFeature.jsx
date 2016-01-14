@@ -21,6 +21,14 @@ SearchResults = React.createClass({
 });
 
 SearchBar = React.createClass({
+
+    getInitialState() {
+        return {
+            //saved: false,
+            text: ""
+        }
+    },
+
     handleSubmit(event) {
         event.preventDefault();
         var keywords = this.state.text.trim();
@@ -32,6 +40,11 @@ SearchBar = React.createClass({
         this.setState({text: text});
     },
 
+    handleSavedChange(event){
+        var value = event.target.checked;
+        this.props.handleSavedChange(value);
+    },
+
     render() {
         return(
           <form className="search-form" onSubmit={this.handleSubmit}>
@@ -41,6 +54,7 @@ SearchBar = React.createClass({
               onChange={this.handleTextChange}
             />
             <input type="submit"/>
+            <input type="checkbox" value="save query" onChange={this.handleSavedChange}></input>
           </form>
         );
     }
@@ -49,8 +63,8 @@ SearchBar = React.createClass({
 KijijiSearchFeature = React.createClass({
     getInitialState() {
         return {
-            "searching": false,
             "keywords" : "",
+            "saved" : false,
             "searchResults" : []
         }
     },
@@ -63,15 +77,29 @@ KijijiSearchFeature = React.createClass({
         );
     },
 
+    saveSearch(){
+        BigList.insert({ search: this.state.keywords })
+    },
+
     handleSubmit(keywords) {
-        this.setState({"keywords" : keywords}, this.sendRequest);
+        var self = this;
+
+        this.setState({"keywords" : keywords}, function(){
+            self.sendRequest();
+            if(self.state.saved) { self.saveSearch() }
+        });
+
+    },
+
+    handleSavedChange(val){
+        this.setState({saved: val});
     },
 
     render() {
         return (
             <div className="kijiji-search-feature">
                 <h3> Kijiji Search </h3>
-                <SearchBar onKeywordSubmit={this.handleSubmit} />
+                <SearchBar onKeywordSubmit={this.handleSubmit} saved={this.state.saved} handleSavedChange={this.handleSavedChange} />
                 <SearchResults results={this.state.searchResults} />
             </div>
         );

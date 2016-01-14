@@ -1,3 +1,5 @@
+BigList  = new Mongo.Collection("shoppingList");
+
 if (Meteor.isClient) {
 
   Accounts.ui.config({

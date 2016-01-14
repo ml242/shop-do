@@ -3,14 +3,9 @@ ShoppingList = React.createClass({
     mixins: [ReactMeteorData],
 
     // Loads items from the shopping collection and puts them on this.data.shoppingList
-
     getMeteorData() {
         return {
-            shoppingList: [
-                { _id: 1, text: "This is item 1" },
-                { _id: 2, text: "This is item 2" },
-                { _id: 3, text: "This is item 3" }
-            ]
+            shoppingList: BigList.find({}).fetch()
         }
     },
 

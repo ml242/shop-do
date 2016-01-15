@@ -1,6 +1,19 @@
 // Item component - represents a single shopping item
 SearchItem = React.createClass({
 
+    mixins: [ReactMeteorData],
+
+    getMeteorData(){
+        return {
+            shoppingItems: FoundItem.find({userId: Meteor.userId(), keywords: this.props.item.search}).fetch()
+        }
+    },
+
+    getInitialState() {
+        return {
+            shoppingItems: []
+        }
+    },
 
     propTypes: {
         // This component gets the task to display through a React prop.
@@ -8,20 +21,29 @@ SearchItem = React.createClass({
         item: React.PropTypes.object.isRequired
     },
 
-    renderSavedListings(){
-        return this.data.shoppingItem.map((item) => {
-            if (this.data.shoppingList.search === item){
-            }
+    renderSaved() {
+        return this.data.shoppingItems.map((item) => {
+            return <li> {item.title} {item.url} </li>;
         });
     },
 
     render() {
-        debugger;
-        return (
-            <li>
-                <span>{this.props.item.search}</span>
-            </li>
-        );
+        if (this.data.shoppingItems.length > 0){
+            return (
+                <li>
+                    <span>{this.props.item.search}</span>
+                        <ul>
+                            { this.renderSaved() }
+                        </ul>
+                </li>
+            );
+        } else {
+            return (
+                <li>
+                    <span>{this.props.item.search}</span>
+                </li>
+            );
+        }
     }
 });
 
@@ -33,14 +55,12 @@ ShoppingList = React.createClass({
     getMeteorData() {
         return {
             shoppingList: BigList.find({ userId: this.props.userId }).fetch(),
-            shoppingItem: FoundItem.find({userId: this.props.userId}).fetch()
         }
     },
 
     getInitialState() {
         return {
-            shoppingList: [],
-            shoppingItem: []
+            shoppingList: []
         }
     },
 
@@ -49,7 +69,6 @@ ShoppingList = React.createClass({
     },
 
     renderItems() {
-
         return this.data.shoppingList.map((keyword) => {
             return <SearchItem key={keyword._id} item={keyword} />;
         });

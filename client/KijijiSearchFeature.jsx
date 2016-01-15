@@ -1,14 +1,33 @@
 Result = React.createClass({
+
+    saveListing() {
+
+        if (BigList.findOne({search: this.props.keywords }) === undefined){
+            BigList.insert({ search: this.props.keywords })
+        }
+
+        FoundItem.insert({
+            keywords: this.props.keywords,
+            title: this.props.title,
+            url: this.props.url
+        })
+
+    },
+
     render() {
-        return <li> <a href={this.props.url} target="_blank"> {this.props.title} </a></li>;
+        return <li> <button className="btn btn-primary" onClick={this.saveListing}>save</button> <a href={this.props.url} target="_blank"> {this.props.title} </a></li>;
     }
 });
 
 SearchResults = React.createClass({
     renderResults() {
-        return this.props.results.map( (result) => {
-            return <Result key={result.guid} title={result.title} url={result.link} />;
-        });
+        if (this.props.results) {
+            return this.props.results.map((result) => {
+                return <Result keywords={this.props.keywords} key={result.guid} title={result.title} url={result.link}/>;
+            });
+        } else {
+            return <span />
+        }
     },
 
     render() {
@@ -16,7 +35,7 @@ SearchResults = React.createClass({
             <ul className="search-results">
                 { this.renderResults() }
             </ul>
-        );
+        )
     }
 });
 
@@ -100,7 +119,7 @@ KijijiSearchFeature = React.createClass({
             <div className="kijiji-search-feature">
                 <h3> Kijiji Search </h3>
                 <SearchBar onKeywordSubmit={this.handleSubmit} saved={this.state.saved} handleSavedChange={this.handleSavedChange} />
-                <SearchResults results={this.state.searchResults} />
+                <SearchResults results={this.state.searchResults} keywords={this.state.keywords}/>
             </div>
         );
     }

@@ -20,11 +20,15 @@ Result = React.createClass({
 });
 
 SearchResults = React.createClass({
+
     renderResults() {
-        if (this.props.results) {
+        // Needs a more elegant CSS solution to let the user know that the software is working, like a spinner
+        if (this.props.results.length > 0) {
             return this.props.results.map((result) => {
                 return <Result keywords={this.props.keywords} key={result.guid} title={result.title} url={result.link}/>;
             });
+        } else if (this.props.results.length === 0 && this.props.searchCount > 0){
+            return <span>No Results Found</span>
         } else {
             return <span />
         }
@@ -84,7 +88,8 @@ KijijiSearchFeature = React.createClass({
         return {
             "keywords" : "",
             "saved" : false,
-            "searchResults" : []
+            "searchResults" : [],
+            searchCount: 0
         }
     },
 
@@ -94,6 +99,11 @@ KijijiSearchFeature = React.createClass({
             this.state.keywords,
             ( error, results ) => { this.setState({'searchResults': results}); }
         );
+
+        if (this.state.searchResults > 0){
+            this.setState({searchCount: 0})
+        }
+
     },
 
     saveSearch(){
@@ -103,7 +113,7 @@ KijijiSearchFeature = React.createClass({
     handleSubmit(keywords) {
         var self = this;
 
-        this.setState({"keywords" : keywords}, function(){
+        this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1}, function(){
             self.sendRequest();
             if(self.state.saved) { self.saveSearch() }
         });
@@ -111,7 +121,9 @@ KijijiSearchFeature = React.createClass({
     },
 
     handleSavedChange(val){
-        this.setState({saved: val});
+        this.setState({
+            saved: val
+        });
     },
 
     render() {
@@ -119,7 +131,7 @@ KijijiSearchFeature = React.createClass({
             <div className="kijiji-search-feature">
                 <h3> Kijiji Search </h3>
                 <SearchBar onKeywordSubmit={this.handleSubmit} saved={this.state.saved} handleSavedChange={this.handleSavedChange} />
-                <SearchResults results={this.state.searchResults} keywords={this.state.keywords}/>
+                <SearchResults results={this.state.searchResults} keywords={this.state.keywords} searchCount={this.state.searchCount} />
             </div>
         );
     }

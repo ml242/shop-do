@@ -21,9 +21,21 @@ SearchItem = React.createClass({
         item: React.PropTypes.object.isRequired
     },
 
+    removeItem(){
+        FoundItem.remove({_id: this.data.shoppingItems[0]._id })
+    },
+
     renderSaved() {
         return this.data.shoppingItems.map((item) => {
-            return <li> {item.title} {item.url} </li>;
+            return (
+                    <ul>
+                        <li> {item.title}</li>
+                        <li> {item.url} </li>
+                        <li> <img src={item.image}></img></li>
+                        <li><button data={item._id} onClick={this.removeItem}> remove </button></li>
+                    </ul>
+
+                )
         });
     },
 
@@ -32,9 +44,9 @@ SearchItem = React.createClass({
             return (
                 <li>
                     <span>{this.props.item.search}</span>
-                        <ul>
-                            { this.renderSaved() }
-                        </ul>
+
+                    { this.renderSaved() }
+
                 </li>
             );
         } else {

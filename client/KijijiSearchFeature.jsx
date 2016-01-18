@@ -1,7 +1,6 @@
 Result = React.createClass({
 
     saveListing() {
-
         if (BigList.findOne({search: this.props.keywords }) === undefined){
             BigList.insert({ search: this.props.keywords })
         }
@@ -9,7 +8,8 @@ Result = React.createClass({
         FoundItem.insert({
             keywords: this.props.keywords,
             title: this.props.title,
-            url: this.props.url
+            url: this.props.url,
+            image: this.props.image
         })
 
     },
@@ -25,7 +25,7 @@ SearchResults = React.createClass({
         // Needs a more elegant CSS solution to let the user know that the software is working, like a spinner
         if (this.props.results.length > 0) {
             return this.props.results.map((result) => {
-                return <Result keywords={this.props.keywords} key={result.guid} title={result.title} url={result.link}/>;
+                return <Result keywords={this.props.keywords} key={result.guid} title={result.title} url={result.link} image={result.innerAd.image}/>;
             });
         } else if (this.props.results.length === 0 && this.props.searchCount > 0){
             return <span>No Results Found</span>

@@ -1,6 +1,9 @@
 Result = React.createClass({
 
     saveListing() {
+
+        debugger;
+
         if (BigList.findOne({search: this.props.keywords }) === undefined){
             BigList.insert({ search: this.props.keywords })
         }
@@ -36,9 +39,11 @@ SearchResults = React.createClass({
 
     render() {
         return (
-            <ul className="search-results">
-                { this.renderResults() }
-            </ul>
+            <div className="row">
+                <ul className="search-results">
+                    { this.renderResults() }
+                </ul>
+            </div>
         )
     }
 });
@@ -70,15 +75,17 @@ SearchBar = React.createClass({
 
     render() {
         return(
-          <form className="search-form" onSubmit={this.handleSubmit}>
-            <input
-              type="text"
-              placeholder="keywords"
-              onChange={this.handleTextChange}
-            />
-            <input type="submit"/>
-            <input type="checkbox" value="save query" onChange={this.handleSavedChange}></input>
-          </form>
+            <div className="row">
+              <form className="search-form" onSubmit={this.handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="keywords"
+                  onChange={this.handleTextChange}
+                />
+                <input type="submit"/>
+                <input type="checkbox" value="save query" onChange={this.handleSavedChange}></input>
+              </form>
+            </div>
         );
     }
 });
@@ -107,7 +114,9 @@ KijijiSearchFeature = React.createClass({
     },
 
     saveSearch(){
-        BigList.insert({ search: this.state.keywords })
+        if (BigList.findOne({ search: this.state.keywords })){
+            BigList.insert({ search: this.state.keywords })
+        }
     },
 
     handleSubmit(keywords) {

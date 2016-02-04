@@ -2,10 +2,10 @@ Result = React.createClass({
 
     saveListing() {
 
-        debugger;
+        // debugger;
 
-        if (BigList.findOne({search: this.props.keywords }) === undefined){
-            BigList.insert({ search: this.props.keywords })
+        if (SavedSearches.findOne({search: this.props.keywords }) === undefined){
+            SavedSearches.insert({ search: this.props.keywords })
         }
 
         FoundItem.insert({
@@ -114,8 +114,8 @@ KijijiSearchFeature = React.createClass({
     },
 
     saveSearch(){
-        if (BigList.findOne({ search: this.state.keywords })){
-            BigList.insert({ search: this.state.keywords })
+        if (SavedSearches.findOne({ search: this.state.keywords })){
+            SavedSearches.insert({ search: this.state.keywords })
         }
     },
 

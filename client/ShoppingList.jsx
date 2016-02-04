@@ -26,7 +26,7 @@ SearchItem = React.createClass({
     },
 
     removeSearch(){
-        BigList.remove({_id: this.props.item._id});
+        SavedSearches.remove({_id: this.props.item._id});
     },
 
     renderSaved() {
@@ -74,7 +74,7 @@ ShoppingList = React.createClass({
     // Loads items from the shopping collection and puts them on this.data.shoppingList
     getMeteorData() {
         return {
-            shoppingList: BigList.find({ userId: this.props.userId }).fetch(),
+            shoppingList: SavedSearches.find({ userId: this.props.userId }).fetch(),
         }
     },
 

@@ -5,7 +5,7 @@ SavedSearch = React.createClass({
 
     getMeteorData(){
         return {
-            shoppingItems: SavedAds.find({userId: Meteor.userId(), keywords: this.props.item.keywords}).fetch()
+            shoppingItems: SavedAds.find({userId: Meteor.userId(), keywords: this.props.search.keywords}).fetch()
         }
     },
 
@@ -18,7 +18,7 @@ SavedSearch = React.createClass({
     propTypes: {
         // This component gets the task to display through a React prop.
         // We can use propTypes to indicate it is required
-        item: React.PropTypes.object.isRequired
+        search: React.PropTypes.object.isRequired
     },
 
     removeItem(){
@@ -26,7 +26,7 @@ SavedSearch = React.createClass({
     },
 
     removeSearch(){
-        SavedSearches.remove({_id: this.props.item._id});
+        SavedSearches.remove({_id: this.props.search._id});
     },
 
     renderSaved() {
@@ -51,7 +51,7 @@ SavedSearch = React.createClass({
         if (this.data.shoppingItems.length > 0){
             return (
                 <li>
-                    <span>{this.props.item.keywords}</span>
+                    <span>{this.props.search.keywords}</span>
 
                     { this.renderSaved() }
 
@@ -60,7 +60,7 @@ SavedSearch = React.createClass({
         } else {
             return (
                 <li>
-                    <span><span onClick={this.reSearch}>{this.props.item.keywords}</span><button className="btn btn-warning" onClick={this.removeSearch}>remove</button></span>
+                    <span><span onClick={this.reSearch}>{this.props.search.keywords}</span><button className="btn btn-warning" onClick={this.removeSearch}>remove</button></span>
                 </li>
             );
         }
@@ -71,7 +71,7 @@ ShoppingList = React.createClass({
 
     mixins: [ReactMeteorData],
 
-    // Loads items from the shopping collection and puts them on this.data.shoppingList
+    // Loads SavedSearches from the shopping collection and puts them on this.data.shoppingList
     getMeteorData() {
         return {
             shoppingList: SavedSearches.find({ userId: this.props.userId }).fetch(),
@@ -90,7 +90,7 @@ ShoppingList = React.createClass({
 
     renderItems() {
         return this.data.shoppingList.map((savedSearch) => {
-            return <SavedSearch key={savedSearch._id} item={savedSearch} />;
+            return <SavedSearch key={savedSearch._id} search={savedSearch} />;
         });
     },
 

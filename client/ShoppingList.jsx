@@ -1,4 +1,4 @@
-// Item component - represents a single shopping item
+// Item component - represents a saved search, contains a list of associated ads
 SavedSearch = React.createClass({
 
     mixins: [ReactMeteorData],

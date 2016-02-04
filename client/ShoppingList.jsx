@@ -1,5 +1,5 @@
 // Item component - represents a single shopping item
-SearchItem = React.createClass({
+SavedSearch = React.createClass({
 
     mixins: [ReactMeteorData],
 
@@ -90,7 +90,7 @@ ShoppingList = React.createClass({
 
     renderItems() {
         return this.data.shoppingList.map((keyword) => {
-            return <SearchItem key={keyword._id} item={keyword} />;
+            return <SavedSearch key={keyword._id} item={keyword} />;
         });
     },
 

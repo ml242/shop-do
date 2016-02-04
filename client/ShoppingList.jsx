@@ -25,6 +25,10 @@ SearchItem = React.createClass({
         FoundItem.remove({_id: this.data.shoppingItems[0]._id })
     },
 
+    removeSearch(){
+        BigList.remove({_id: this.props.item._id});
+    },
+
     renderSaved() {
         return this.data.shoppingItems.map((item) => {
             return (
@@ -37,6 +41,10 @@ SearchItem = React.createClass({
 
                 )
         });
+    },
+
+    reSearch(){
+    // TODO   How to pass the search to a different state and have it redraw?
     },
 
     render() {
@@ -52,7 +60,7 @@ SearchItem = React.createClass({
         } else {
             return (
                 <li>
-                    <span>{this.props.item.search}</span>
+                    <span><span onClick={this.reSearch}>{this.props.item.search}</span><button className="btn btn-warning" onClick={this.removeSearch}>remove</button></span>
                 </li>
             );
         }
@@ -88,9 +96,11 @@ ShoppingList = React.createClass({
 
     render() {
         return (
-            <ul className="shopping-list">
-                { this.renderItems()}
-            </ul>
+            <div className="row">
+                <ul className="shopping-list list-unstyled">
+                    { this.renderItems()}
+                </ul>
+            </div>
         );
     }
 });

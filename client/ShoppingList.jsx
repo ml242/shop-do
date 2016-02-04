@@ -5,7 +5,7 @@ SavedSearch = React.createClass({
 
     getMeteorData(){
         return {
-            shoppingItems: SavedAds.find({userId: Meteor.userId(), keywords: this.props.item.search}).fetch()
+            shoppingItems: SavedAds.find({userId: Meteor.userId(), keywords: this.props.item.keywords}).fetch()
         }
     },
 
@@ -51,7 +51,7 @@ SavedSearch = React.createClass({
         if (this.data.shoppingItems.length > 0){
             return (
                 <li>
-                    <span>{this.props.item.search}</span>
+                    <span>{this.props.item.keywords}</span>
 
                     { this.renderSaved() }
 
@@ -60,7 +60,7 @@ SavedSearch = React.createClass({
         } else {
             return (
                 <li>
-                    <span><span onClick={this.reSearch}>{this.props.item.search}</span><button className="btn btn-warning" onClick={this.removeSearch}>remove</button></span>
+                    <span><span onClick={this.reSearch}>{this.props.item.keywords}</span><button className="btn btn-warning" onClick={this.removeSearch}>remove</button></span>
                 </li>
             );
         }
@@ -89,8 +89,8 @@ ShoppingList = React.createClass({
     },
 
     renderItems() {
-        return this.data.shoppingList.map((keyword) => {
-            return <SavedSearch key={keyword._id} item={keyword} />;
+        return this.data.shoppingList.map((savedSearch) => {
+            return <SavedSearch key={savedSearch._id} item={savedSearch} />;
         });
     },
 

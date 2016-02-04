@@ -4,8 +4,8 @@ Result = React.createClass({
 
         // debugger;
 
-        if (SavedSearches.findOne({search: this.props.keywords }) === undefined){
-            SavedSearches.insert({ search: this.props.keywords })
+        if (SavedSearches.findOne({keywords: this.props.keywords }) === undefined){
+            SavedSearches.insert({ keywords: this.props.keywords })
         }
 
         SavedAds.insert({
@@ -114,8 +114,8 @@ KijijiSearchFeature = React.createClass({
     },
 
     saveSearch(){
-        if (SavedSearches.findOne({ search: this.state.keywords })){
-            SavedSearches.insert({ search: this.state.keywords })
+        if (SavedSearches.findOne({ keywords: this.state.keywords })){
+            SavedSearches.insert({ keywords: this.state.keywords })
         }
     },
 

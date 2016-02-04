@@ -5,7 +5,7 @@ SearchItem = React.createClass({
 
     getMeteorData(){
         return {
-            shoppingItems: FoundItem.find({userId: Meteor.userId(), keywords: this.props.item.search}).fetch()
+            shoppingItems: SavedAds.find({userId: Meteor.userId(), keywords: this.props.item.search}).fetch()
         }
     },
 
@@ -22,7 +22,7 @@ SearchItem = React.createClass({
     },
 
     removeItem(){
-        FoundItem.remove({_id: this.data.shoppingItems[0]._id })
+        SavedAds.remove({_id: this.data.shoppingItems[0]._id })
     },
 
     removeSearch(){

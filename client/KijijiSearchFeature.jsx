@@ -8,7 +8,7 @@ Result = React.createClass({
             SavedSearches.insert({ search: this.props.keywords })
         }
 
-        FoundItem.insert({
+        SavedAds.insert({
             keywords: this.props.keywords,
             title: this.props.title,
             url: this.props.url,

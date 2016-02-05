@@ -10,7 +10,6 @@ Result = React.createClass({
             searchId = SavedSearches.insert({ keywords: this.props.keywords });
         }
 
-        console.log(searchId);
         SavedAds.insert({
             searchId: searchId,
             title: this.props.title,

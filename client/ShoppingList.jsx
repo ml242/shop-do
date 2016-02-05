@@ -1,3 +1,19 @@
+SavedAd = React.createClass({
+    propTypes: {
+        ad: React.PropTypes.object.isRequired
+    },
+
+    render() {
+        return (
+            <div className="saved-ad">
+                <h3> {this.props.ad.title}</h3>
+                <p> {this.props.ad.url} </p>
+                <img src={this.props.ad.image}/>
+            </div>
+        );        
+    }
+});
+
 // Item component - represents a saved search, contains a list of associated ads
 SavedSearch = React.createClass({
 
@@ -29,17 +45,14 @@ SavedSearch = React.createClass({
         SavedSearches.remove({_id: this.props.search._id});
     },
 
-    renderSaved() {
+    renderSavedItems() {
         return this.data.shoppingItems.map((item) => {
             return (
-                    <ul>
-                        <li> {item.title}</li>
-                        <li> {item.url} </li>
-                        <li> <img src={item.image}></img></li>
-                        <li><button data={item._id} onClick={this.removeItem}> remove </button></li>
-                    </ul>
-
-                )
+                <li key={item._id}>
+                    <SavedAd ad={item} />
+                    <button data={item._id} onClick={this.removeItem}> remove </button>
+                </li>
+            );
         });
     },
 
@@ -50,18 +63,17 @@ SavedSearch = React.createClass({
     render() {
         if (this.data.shoppingItems.length > 0){
             return (
-                <li>
+                <div className="saved-search">
                     <span>{this.props.search.keywords}</span>
-
-                    { this.renderSaved() }
-
-                </li>
+                    <ul> { this.renderSavedItems() } </ul>
+                </div>
             );
         } else {
             return (
-                <li>
-                    <span><span onClick={this.reSearch}>{this.props.search.keywords}</span><button className="btn btn-warning" onClick={this.removeSearch}>remove</button></span>
-                </li>
+                <span>
+                    <span onClick={this.reSearch}>{this.props.search.keywords}</span>
+                    <button className="btn btn-warning" onClick={this.removeSearch}>remove</button>
+                </span>
             );
         }
     }
@@ -90,7 +102,11 @@ ShoppingList = React.createClass({
 
     renderItems() {
         return this.data.shoppingList.map((savedSearch) => {
-            return <SavedSearch key={savedSearch._id} search={savedSearch} />;
+            return (
+                <li key={savedSearch._id}>
+                    <SavedSearch search={savedSearch} />
+                </li>
+            );
         });
     },
 

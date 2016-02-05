@@ -1,6 +1,12 @@
 SavedAd = React.createClass({
+    
     propTypes: {
-        ad: React.PropTypes.object.isRequired
+        ad: React.PropTypes.object.isRequired,
+        onRemove: React.PropTypes.func.isRequired
+    },
+
+    handleRemove() {
+        this.props.onRemove(this.props.ad._id);
     },
 
     render() {
@@ -9,6 +15,7 @@ SavedAd = React.createClass({
                 <h3> {this.props.ad.title}</h3>
                 <p> {this.props.ad.url} </p>
                 <img src={this.props.ad.image}/>
+                <button onClick={this.handleRemove}>remove</button>
             </div>
         );        
     }
@@ -37,8 +44,8 @@ SavedSearch = React.createClass({
         search: React.PropTypes.object.isRequired
     },
 
-    removeItem(){
-        SavedAds.remove({_id: this.data.shoppingItems[0]._id })
+    removeItem(id){
+        SavedAds.remove({_id: id});
     },
 
     removeSearch(){
@@ -49,8 +56,7 @@ SavedSearch = React.createClass({
         return this.data.shoppingItems.map((item) => {
             return (
                 <li key={item._id}>
-                    <SavedAd ad={item} />
-                    <button data={item._id} onClick={this.removeItem}> remove </button>
+                    <SavedAd ad={item} onRemove={this.removeItem} />
                 </li>
             );
         });

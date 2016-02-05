@@ -1,20 +1,22 @@
 Result = React.createClass({
 
     saveListing() {
+        var searchId;
 
-        // debugger;
-
-        if (SavedSearches.findOne({keywords: this.props.keywords }) === undefined){
-            SavedSearches.insert({ keywords: this.props.keywords })
+        if( SavedSearches.findOne({keywords: this.props.keywords }) ){
+            searchId = SavedSearches.findOne({keywords: this.props.keywords })._id;
+        } else {
+            // Collection.insert returns the _id of the new record.
+            searchId = SavedSearches.insert({ keywords: this.props.keywords });
         }
 
+        console.log(searchId);
         SavedAds.insert({
-            keywords: this.props.keywords,
+            searchId: searchId,
             title: this.props.title,
             url: this.props.url,
             image: this.props.image
-        })
-
+        });
     },
 
     render() {

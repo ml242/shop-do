@@ -28,7 +28,7 @@ SavedSearch = React.createClass({
 
     getMeteorData(){
         return {
-            shoppingItems: SavedAds.find({userId: Meteor.userId(), keywords: this.props.search.keywords}).fetch()
+            shoppingItems: SavedAds.find({userId: Meteor.userId(), searchId: this.props.search._id}).fetch()
         }
     },
 

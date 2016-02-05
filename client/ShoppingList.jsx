@@ -28,7 +28,7 @@ SavedSearch = React.createClass({
 
     getMeteorData(){
         return {
-            shoppingItems: SavedAds.find({userId: Meteor.userId(), searchId: this.props.search._id}).fetch()
+            shoppingItems: SavedAds.find({userId: this.props.userId, searchId: this.props.search._id}).fetch()
         }
     },
 
@@ -41,7 +41,8 @@ SavedSearch = React.createClass({
     propTypes: {
         // This component gets the task to display through a React prop.
         // We can use propTypes to indicate it is required
-        search: React.PropTypes.object.isRequired
+        search: React.PropTypes.object.isRequired,
+        userId: React.PropTypes.string.isRequired
     },
 
     removeItem(id){
@@ -110,7 +111,7 @@ ShoppingList = React.createClass({
         return this.data.shoppingList.map((savedSearch) => {
             return (
                 <li key={savedSearch._id}>
-                    <SavedSearch search={savedSearch} />
+                    <SavedSearch search={savedSearch} userId={this.props.userId} />
                 </li>
             );
         });

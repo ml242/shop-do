@@ -17,3 +17,7 @@ AccountsUIWrapper = React.createClass({
         return <div ref="container" className="row" />;
     }
 });
+
+Accounts.ui.config({
+    passwordSignupFields: 'USERNAME_AND_EMAIL'
+});

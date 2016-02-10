@@ -1,11 +1,34 @@
-// Item component - represents a single shopping item
-SearchItem = React.createClass({
+SavedAd = React.createClass({
+    
+    propTypes: {
+        ad: React.PropTypes.object.isRequired,
+        onRemove: React.PropTypes.func.isRequired
+    },
+
+    handleRemove() {
+        this.props.onRemove(this.props.ad._id);
+    },
+
+    render() {
+        return (
+            <div className="saved-ad">
+                <h3> {this.props.ad.title}</h3>
+                <p> {this.props.ad.url} </p>
+                <img src={this.props.ad.image}/>
+                <button onClick={this.handleRemove}>remove</button>
+            </div>
+        );        
+    }
+});
+
+// Item component - represents a saved search, contains a list of associated ads
+SavedSearch = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData(){
         return {
-            shoppingItems: FoundItem.find({userId: Meteor.userId(), keywords: this.props.item.search}).fetch()
+            shoppingItems: SavedAds.find({userId: this.props.userId, searchId: this.props.search._id}).fetch()
         }
     },
 
@@ -18,28 +41,25 @@ SearchItem = React.createClass({
     propTypes: {
         // This component gets the task to display through a React prop.
         // We can use propTypes to indicate it is required
-        item: React.PropTypes.object.isRequired
+        search: React.PropTypes.object.isRequired,
+        userId: React.PropTypes.string.isRequired
     },
 
-    removeItem(){
-        FoundItem.remove({_id: this.data.shoppingItems[0]._id })
+    removeItem(id){
+        SavedAds.remove({_id: id});
     },
 
     removeSearch(){
-        BigList.remove({_id: this.props.item._id});
+        SavedSearches.remove({_id: this.props.search._id});
     },
 
-    renderSaved() {
+    renderSavedItems() {
         return this.data.shoppingItems.map((item) => {
             return (
-                    <ul>
-                        <li> {item.title}</li>
-                        <li> {item.url} </li>
-                        <li> <img src={item.image}></img></li>
-                        <li><button data={item._id} onClick={this.removeItem}> remove </button></li>
-                    </ul>
-
-                )
+                <li key={item._id}>
+                    <SavedAd ad={item} onRemove={this.removeItem} />
+                </li>
+            );
         });
     },
 
@@ -50,18 +70,17 @@ SearchItem = React.createClass({
     render() {
         if (this.data.shoppingItems.length > 0){
             return (
-                <li>
-                    <span>{this.props.item.search}</span>
-
-                    { this.renderSaved() }
-
-                </li>
+                <div className="saved-search">
+                    <span>{this.props.search.keywords}</span>
+                    <ul> { this.renderSavedItems() } </ul>
+                </div>
             );
         } else {
             return (
-                <li>
-                    <span><span onClick={this.reSearch}>{this.props.item.search}</span><button className="btn btn-warning" onClick={this.removeSearch}>remove</button></span>
-                </li>
+                <span>
+                    <span onClick={this.reSearch}>{this.props.search.keywords}</span>
+                    <button className="btn btn-warning" onClick={this.removeSearch}>remove</button>
+                </span>
             );
         }
     }
@@ -71,10 +90,10 @@ ShoppingList = React.createClass({
 
     mixins: [ReactMeteorData],
 
-    // Loads items from the shopping collection and puts them on this.data.shoppingList
+    // Loads SavedSearches from the shopping collection and puts them on this.data.shoppingList
     getMeteorData() {
         return {
-            shoppingList: BigList.find({ userId: this.props.userId }).fetch(),
+            shoppingList: SavedSearches.find({ userId: this.props.userId }).fetch(),
         }
     },
 
@@ -89,8 +108,12 @@ ShoppingList = React.createClass({
     },
 
     renderItems() {
-        return this.data.shoppingList.map((keyword) => {
-            return <SearchItem key={keyword._id} item={keyword} />;
+        return this.data.shoppingList.map((savedSearch) => {
+            return (
+                <li key={savedSearch._id}>
+                    <SavedSearch search={savedSearch} userId={this.props.userId} />
+                </li>
+            );
         });
     },
 

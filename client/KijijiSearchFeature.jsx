@@ -1,20 +1,21 @@
 Result = React.createClass({
 
     saveListing() {
+        var searchId;
 
-        debugger;
-
-        if (BigList.findOne({search: this.props.keywords }) === undefined){
-            BigList.insert({ search: this.props.keywords })
+        if( SavedSearches.findOne({keywords: this.props.keywords }) ){
+            searchId = SavedSearches.findOne({keywords: this.props.keywords })._id;
+        } else {
+            // Collection.insert returns the _id of the new record.
+            searchId = SavedSearches.insert({ keywords: this.props.keywords });
         }
 
-        FoundItem.insert({
-            keywords: this.props.keywords,
+        SavedAds.insert({
+            searchId: searchId,
             title: this.props.title,
             url: this.props.url,
             image: this.props.image
-        })
-
+        });
     },
 
     render() {
@@ -114,8 +115,8 @@ KijijiSearchFeature = React.createClass({
     },
 
     saveSearch(){
-        if (BigList.findOne({ search: this.state.keywords })){
-            BigList.insert({ search: this.state.keywords })
+        if (SavedSearches.findOne({ keywords: this.state.keywords })){
+            SavedSearches.insert({ keywords: this.state.keywords })
         }
     },
 

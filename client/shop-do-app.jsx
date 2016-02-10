@@ -2,8 +2,6 @@
  * Created by mattlucas on 1/11/16.
  */
 
-
-
 App = React.createClass({
 
     mixins: [ReactMeteorData],
@@ -40,4 +38,9 @@ App = React.createClass({
         }
     }
 
+});
+
+Meteor.startup(function () {
+    // Use Meteor.startup to render the component after the page is ready
+    ReactDOM.render(<App />, document.getElementById("render-target"));
 });

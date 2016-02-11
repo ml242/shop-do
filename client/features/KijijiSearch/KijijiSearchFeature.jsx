@@ -26,13 +26,19 @@ Result = React.createClass({
 SearchResults = React.createClass({
 
     renderResults() {
+        debugger;
         // Needs a more elegant CSS solution to let the user know that the software is working, like a spinner
+
         if (this.props.results.length > 0) {
             return this.props.results.map((result) => {
-                return <Result keywords={this.props.keywords} key={result.guid} title={result.title} url={result.link} image={result.innerAd.image}/>;
+                return <Result keywords={this.props.keywords} key={result.guid} title={result.title} url={result.link}
+                               image={result.innerAd.image} loading={this.props.loading}
+                               searchCount={this.props.searchCount}/>;
             });
-        } else if (this.props.results.length === 0 && this.props.searchCount > 0){
-            return <span>No Results Found</span>
+        } else if (this.props.loading) {
+            return <span className="glyphicon glyphicon-refresh spinning"></span>
+        } else if (!this.props.loading && this.props.searchCount > 0){
+            return <span>no results found</span>
         } else {
             return <span />
         }
@@ -94,10 +100,11 @@ SearchBar = React.createClass({
 KijijiSearchFeature = React.createClass({
     getInitialState() {
         return {
-            "keywords" : "",
-            "saved" : false,
-            "searchResults" : [],
-            searchCount: 0
+            "keywords": "",
+            "saved": false,
+            "searchResults": [],
+            searchCount: 0,
+            loading: ''
         }
     },
 
@@ -105,12 +112,13 @@ KijijiSearchFeature = React.createClass({
         Meteor.call( 
             'KijijiSearch',
             this.state.keywords,
-            ( error, results ) => { this.setState({'searchResults': results}); }
+            ( error, results ) => {
+                this.setState({
+                    'searchResults': results,
+                    'loading': results.length != 0
+                });
+            }
         );
-
-        if (this.state.searchResults > 0){
-            this.setState({searchCount: 0})
-        }
 
     },
 
@@ -123,7 +131,7 @@ KijijiSearchFeature = React.createClass({
     handleSubmit(keywords) {
         var self = this;
 
-        this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1}, function(){
+        this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1, loading: true }, function(){
             self.sendRequest();
             if(self.state.saved) { self.saveSearch() }
         });
@@ -141,7 +149,7 @@ KijijiSearchFeature = React.createClass({
             <div className="kijiji-search-feature row">
                 <h3> Kijiji Search </h3>
                 <SearchBar onKeywordSubmit={this.handleSubmit} saved={this.state.saved} handleSavedChange={this.handleSavedChange} />
-                <SearchResults results={this.state.searchResults} keywords={this.state.keywords} searchCount={this.state.searchCount} />
+                <SearchResults results={this.state.searchResults} keywords={this.state.keywords} loading={this.state.loading} searchCount={this.state.searchCount} />
             </div>
         );
     }

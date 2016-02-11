@@ -91,7 +91,7 @@ SearchBar = React.createClass({
     }
 });
 
-KijijiSearchFeature = React.createClass({
+SearchFeature = React.createClass({
     getInitialState() {
         return {
             "keywords" : "",
@@ -101,17 +101,8 @@ KijijiSearchFeature = React.createClass({
         }
     },
 
-    sendRequest() {
-        Meteor.call( 
-            'KijijiSearch',
-            this.state.keywords,
-            ( error, results ) => { this.setState({'searchResults': results}); }
-        );
-
-        if (this.state.searchResults > 0){
-            this.setState({searchCount: 0})
-        }
-
+    propTypes: {
+        handleSendRequest: React.PropTypes.func.isRequired
     },
 
     saveSearch(){
@@ -124,10 +115,9 @@ KijijiSearchFeature = React.createClass({
         var self = this;
 
         this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1}, function(){
-            self.sendRequest();
+            self.props.handleSendRequest(self.state.keywords, ((error, results) => { this.setState({'searchResults': results});}) ) ;
             if(self.state.saved) { self.saveSearch() }
         });
-
     },
 
     handleSavedChange(val){
@@ -138,10 +128,25 @@ KijijiSearchFeature = React.createClass({
 
     render() {
         return (
-            <div className="kijiji-search-feature row">
-                <h3> Kijiji Search </h3>
+            <div className="search-feature row">
                 <SearchBar onKeywordSubmit={this.handleSubmit} saved={this.state.saved} handleSavedChange={this.handleSavedChange} />
                 <SearchResults results={this.state.searchResults} keywords={this.state.keywords} searchCount={this.state.searchCount} />
+            </div>
+        );
+    }
+});
+
+KijijiSearchFeature = React.createClass({
+
+    sendRequest(keywords, success) {
+        Meteor.call('KijijiSearch', keywords, success);
+    },
+
+    render() {
+        return (
+            <div className="kijiji-search-feature">
+                <h3> Kijiji Search </h3>
+                <SearchFeature handleSendRequest={this.sendRequest}/>
             </div>
         );
     }

@@ -26,7 +26,7 @@ Result = React.createClass({
 SearchResults = React.createClass({
 
     renderResults() {
-        debugger;
+        // debugger;
         // Needs a more elegant CSS solution to let the user know that the software is working, like a spinner
 
         if (this.props.results.length > 0) {
@@ -121,7 +121,7 @@ SearchFeature = React.createClass({
     handleSubmit(keywords) {
         var self = this;
 
-        this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1}, function(){
+        this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1, loading: true}, function(){
             self.props.handleSendRequest(self.state.keywords, ((error, results) => { this.setState({'searchResults': results});}) ) ;
             if(self.state.saved) { self.saveSearch() }
         });

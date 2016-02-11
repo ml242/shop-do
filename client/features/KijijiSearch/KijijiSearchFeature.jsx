@@ -26,29 +26,23 @@ Result = React.createClass({
 SearchResults = React.createClass({
 
     renderResults() {
-        // debugger;
-        // Needs a more elegant CSS solution to let the user know that the software is working, like a spinner
-
-        if (this.props.results.length > 0) {
-            return this.props.results.map((result) => {
-                return <Result keywords={this.props.keywords} key={result.guid} title={result.title} url={result.link}
-                               image={result.innerAd.image} loading={this.props.loading}
-                               searchCount={this.props.searchCount}/>;
-            });
-        } else if (this.props.loading) {
-            return <span className="glyphicon glyphicon-refresh spinning"></span>
-        } else if (!this.props.loading && this.props.searchCount > 0){
-            return <span>no results found</span>
-        } else {
-            return <span />
-        }
+        return this.props.results.map((result) => {
+            return <Result  key={result.guid}
+                        keywords={this.props.keywords}
+                        title={result.title} url={result.link}
+                        image={result.innerAd.image}
+                        searchCount={this.props.searchCount} />;
+        });
     },
 
     render() {
         return (
             <div className="row">
                 <ul className="search-results">
-                    { this.renderResults() }
+                    { this.props.results.length === 0 ?
+                        <span> no results found </span> :
+                        this.renderResults()
+                    }
                 </ul>
             </div>
         )
@@ -118,11 +112,15 @@ SearchFeature = React.createClass({
         }
     },
 
+    handleResults(error, results) {
+        this.setState({'searchResults': results, loading: false }); 
+    },
+
     handleSubmit(keywords) {
         var self = this;
 
         this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1, loading: true}, function(){
-            self.props.handleSendRequest(self.state.keywords, ((error, results) => { this.setState({'searchResults': results, 'loading': results.length != 0 });}) ) ;
+            self.props.handleSendRequest(self.state.keywords, self.handleResults);
             if(self.state.saved) { self.saveSearch() }
         });
     },
@@ -137,7 +135,10 @@ SearchFeature = React.createClass({
         return (
             <div className="search-feature row">
                 <SearchBar onKeywordSubmit={this.handleSubmit} saved={this.state.saved} handleSavedChange={this.handleSavedChange} />
-                <SearchResults results={this.state.searchResults} keywords={this.state.keywords} loading={this.state.loading} searchCount={this.state.searchCount} />
+                { this.state.loading ?
+                    <Spinner /> :
+                    <SearchResults results={this.state.searchResults} keywords={this.state.keywords} searchCount={this.state.searchCount} />
+                }
             </div>
         );
     }
@@ -156,5 +157,11 @@ KijijiSearchFeature = React.createClass({
                 <SearchFeature handleSendRequest={this.sendRequest}/>
             </div>
         );
+    }
+});
+
+Spinner = React.createClass({
+    render() {
+        return <span className="glyphicon glyphicon-refresh spinning"></span>
     }
 });

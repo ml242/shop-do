@@ -26,7 +26,7 @@ twbs:bootstrap
 aldeed:collection2
 meteorhacks:npm
 
-
+fourseven:scss@=2.1.1
 
 
 npm-container

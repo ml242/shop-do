@@ -138,7 +138,7 @@ KijijiSearchFeature = React.createClass({
 
     render() {
         return (
-            <div className="kijiji-search-feature">
+            <div className="kijiji-search-feature row">
                 <h3> Kijiji Search </h3>
                 <SearchBar onKeywordSubmit={this.handleSubmit} saved={this.state.saved} handleSavedChange={this.handleSavedChange} />
                 <SearchResults results={this.state.searchResults} keywords={this.state.keywords} searchCount={this.state.searchCount} />

@@ -1,11 +1,3 @@
-Meteor.startup(function () {
-    return Meteor.methods({
-        //removeItem: function(id) {
-        //    return FoundItem.remove({id: id});
-        //}
-    });
-});
-
 Kijiji = Meteor.npmRequire( 'kijiji-scraper' );
 
 Meteor.methods({

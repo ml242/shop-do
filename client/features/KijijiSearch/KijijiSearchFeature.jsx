@@ -122,7 +122,7 @@ SearchFeature = React.createClass({
         var self = this;
 
         this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1, loading: true}, function(){
-            self.props.handleSendRequest(self.state.keywords, ((error, results) => { this.setState({'searchResults': results});}) ) ;
+            self.props.handleSendRequest(self.state.keywords, ((error, results) => { this.setState({'searchResults': results, 'loading': results.length != 0 });}) ) ;
             if(self.state.saved) { self.saveSearch() }
         });
     },

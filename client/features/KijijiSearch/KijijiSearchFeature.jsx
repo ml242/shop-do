@@ -1,25 +1,17 @@
 Result = React.createClass({
 
-    saveListing() {
-        var searchId;
-
-        if( SavedSearches.findOne({keywords: this.props.keywords }) ){
-            searchId = SavedSearches.findOne({keywords: this.props.keywords })._id;
-        } else {
-            // Collection.insert returns the _id of the new record.
-            searchId = SavedSearches.insert({ keywords: this.props.keywords });
-        }
-
-        SavedAds.insert({
-            searchId: searchId,
-            title: this.props.title,
-            url: this.props.url,
-            image: this.props.image
-        });
+    handleSaveListing(event) {
+        event.preventDefault();
+        this.props.handleSaveListing(this.props.keywords, this.props.url, this.props.title, this.props.image);
     },
 
     render() {
-        return <li> <button className="btn btn-primary" onClick={this.saveListing}>save</button> <a href={this.props.url} target="_blank"> {this.props.title} </a></li>;
+        return (
+            <div className="result">
+                <button className="btn btn-primary" onClick={this.handleSaveListing}>save</button>
+                <a href={this.props.url} target="_blank"> {this.props.title} </a>
+            </div>
+        );
     }
 });
 
@@ -27,25 +19,29 @@ SearchResults = React.createClass({
 
     renderResults() {
         return this.props.results.map((result) => {
-            return <Result  key={result.guid}
-                        keywords={this.props.keywords}
-                        title={result.title} url={result.link}
-                        image={result.innerAd.image}
-                        searchCount={this.props.searchCount} />;
+            return (
+                <li key={result.guid} >
+                        <Result
+                            keywords={this.props.keywords}
+                            title={result.title}
+                            url={result.link}
+                            image={result.innerAd.image}
+                            handleSaveListing={this.props.handleSaveListing}
+                        />
+                </li>
+            );
         });
     },
 
     render() {
         return (
-            <div className="row">
-                <ul className="search-results">
-                    { this.props.results.length === 0 ?
-                        <span> no results found </span> :
-                        this.renderResults()
-                    }
-                </ul>
-            </div>
-        )
+            <ul className="search-results row">
+                { this.props.results.length === 0 ?
+                    <span> no results found </span> :
+                    this.renderResults()
+                }
+            </ul>
+        );
     }
 });
 
@@ -121,7 +117,7 @@ SearchFeature = React.createClass({
 
         this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1, loading: true}, function(){
             self.props.handleSendRequest(self.state.keywords, self.handleResults);
-            if(self.state.saved) { self.saveSearch() }
+            if(self.state.saved) { self.saveSearch(); }
         });
     },
 
@@ -131,13 +127,41 @@ SearchFeature = React.createClass({
         });
     },
 
+    saveListing(keywords, url, title, image){
+        var searchId;
+
+        if( SavedSearches.findOne({keywords: keywords }) ){
+            searchId = SavedSearches.findOne({keywords: keywords })._id;
+        } else {
+            // Collection.insert returns the _id of the new record.
+            searchId = SavedSearches.insert({ keywords: keywords });
+        }
+
+        SavedAds.insert({
+            searchId: searchId,
+            title: title,
+            url: url,
+            image: image
+        });
+    },
+
     render() {
         return (
             <div className="search-feature row">
-                <SearchBar onKeywordSubmit={this.handleSubmit} saved={this.state.saved} handleSavedChange={this.handleSavedChange} />
+                <SearchBar
+                    onKeywordSubmit={this.handleSubmit}
+                    saved={this.state.saved}
+                    handleSavedChange={this.handleSavedChange}
+                />
+
                 { this.state.loading ?
                     <Spinner /> :
-                    <SearchResults results={this.state.searchResults} keywords={this.state.keywords} searchCount={this.state.searchCount} />
+                    <SearchResults
+                        results={this.state.searchResults}
+                        keywords={this.state.keywords}
+                        searchCount={this.state.searchCount}
+                        handleSaveListing={this.saveListing}
+                    />
                 }
             </div>
         );

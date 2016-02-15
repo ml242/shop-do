@@ -1,5 +1,5 @@
 SavedAd = React.createClass({
-    
+
     propTypes: {
         ad: React.PropTypes.object.isRequired,
         onRemove: React.PropTypes.func.isRequired
@@ -17,7 +17,7 @@ SavedAd = React.createClass({
                 <img src={this.props.ad.image}/>
                 <button onClick={this.handleRemove}>remove</button>
             </div>
-        );        
+        );
     }
 });
 
@@ -45,6 +45,11 @@ SavedSearch = React.createClass({
         userId: React.PropTypes.string.isRequired
     },
 
+    reSearch(){
+        // TODO   How to pass the search to a different state and have it redraw?
+        alert();
+    },
+
     removeItem(id){
         SavedAds.remove({_id: id});
     },
@@ -56,29 +61,25 @@ SavedSearch = React.createClass({
     renderSavedItems() {
         return this.data.shoppingItems.map((item) => {
             return (
-                <li key={item._id}>
+                <li key={item._id} onClick={this.reSearch}>
                     <SavedAd ad={item} onRemove={this.removeItem} />
                 </li>
             );
         });
     },
 
-    reSearch(){
-    // TODO   How to pass the search to a different state and have it redraw?
-    },
-
     render() {
-        if (this.data.shoppingItems.length > 0){
+        if (this.data.shoppingItems.length > 0) {
             return (
                 <div className="saved-search">
-                    <span>{this.props.search.keywords}</span>
+                    <span onClick={this.reSearch}>{this.props.search.keywords}</span>
                     <ul> { this.renderSavedItems() } </ul>
                 </div>
             );
         } else {
             return (
                 <span>
-                    <span onClick={this.reSearch}>{this.props.search.keywords}</span>
+                    <span>{this.props.search.keywords}</span>
                     <button className="btn btn-warning" onClick={this.removeSearch}>remove</button>
                 </span>
             );
@@ -93,7 +94,7 @@ ShoppingList = React.createClass({
     // Loads SavedSearches from the shopping collection and puts them on this.data.shoppingList
     getMeteorData() {
         return {
-            shoppingList: SavedSearches.find({ userId: this.props.userId }).fetch(),
+            shoppingList: SavedSearches.find({userId: this.props.userId}).fetch(),
         }
     },
 
@@ -111,7 +112,7 @@ ShoppingList = React.createClass({
         return this.data.shoppingList.map((savedSearch) => {
             return (
                 <li key={savedSearch._id}>
-                    <SavedSearch search={savedSearch} userId={this.props.userId} />
+                    <SavedSearch search={savedSearch} userId={this.props.userId}/>
                 </li>
             );
         });

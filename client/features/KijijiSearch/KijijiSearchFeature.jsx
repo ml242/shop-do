@@ -1,57 +1,47 @@
 Result = React.createClass({
 
-    saveListing() {
-        var searchId;
-
-        if( SavedSearches.findOne({keywords: this.props.keywords }) ){
-            searchId = SavedSearches.findOne({keywords: this.props.keywords })._id;
-        } else {
-            // Collection.insert returns the _id of the new record.
-            searchId = SavedSearches.insert({ keywords: this.props.keywords });
-        }
-
-        SavedAds.insert({
-            searchId: searchId,
-            title: this.props.title,
-            url: this.props.url,
-            image: this.props.image
-        });
+    handleSaveListing(event) {
+        event.preventDefault();
+        this.props.handleSaveListing(this.props.keywords, this.props.url, this.props.title, this.props.image);
     },
 
     render() {
-        return <li> <button className="btn btn-primary" onClick={this.saveListing}>save</button> <a href={this.props.url} target="_blank"> {this.props.title} </a></li>;
+        return (
+            <div className="result">
+                <button className="btn btn-primary" onClick={this.handleSaveListing}>save</button>
+                <a href={this.props.url} target="_blank"> {this.props.title} </a>
+            </div>
+        );
     }
 });
 
 SearchResults = React.createClass({
 
     renderResults() {
-        debugger;
-        // Needs a more elegant CSS solution to let the user know that the software is working, like a spinner
-
-        if (this.props.results.length > 0) {
-            return this.props.results.map((result) => {
-                return <Result keywords={this.props.keywords} key={result.guid} title={result.title} url={result.link}
-                               image={result.innerAd.image} loading={this.props.loading}
-                               searchCount={this.props.searchCount}/>;
-            });
-        } else if (this.props.loading) {
-            return <span className="glyphicon glyphicon-refresh spinning"></span>
-        } else if (!this.props.loading && this.props.searchCount > 0){
-            return <span>no results found</span>
-        } else {
-            return <span />
-        }
+        return this.props.results.map((result) => {
+            return (
+                <li key={result.guid} >
+                        <Result
+                            keywords={this.props.keywords}
+                            title={result.title}
+                            url={result.link}
+                            image={result.innerAd.image}
+                            handleSaveListing={this.props.handleSaveListing}
+                        />
+                </li>
+            );
+        });
     },
 
     render() {
         return (
-            <div className="row">
-                <ul className="search-results">
-                    { this.renderResults() }
-                </ul>
-            </div>
-        )
+            <ul className="search-results row">
+                { this.props.results.length === 0 ?
+                    <span> no results found </span> :
+                    this.renderResults()
+                }
+            </ul>
+        );
     }
 });
 
@@ -97,7 +87,7 @@ SearchBar = React.createClass({
     }
 });
 
-KijijiSearchFeature = React.createClass({
+SearchFeature = React.createClass({
     getInitialState() {
         return {
             "keywords": "",
@@ -108,18 +98,8 @@ KijijiSearchFeature = React.createClass({
         }
     },
 
-    sendRequest() {
-        Meteor.call( 
-            'KijijiSearch',
-            this.state.keywords,
-            ( error, results ) => {
-                this.setState({
-                    'searchResults': results,
-                    'loading': results.length != 0
-                });
-            }
-        );
-
+    propTypes: {
+        handleSendRequest: React.PropTypes.func.isRequired
     },
 
     saveSearch(){
@@ -128,14 +108,17 @@ KijijiSearchFeature = React.createClass({
         }
     },
 
+    handleResults(error, results) {
+        this.setState({'searchResults': results, loading: false }); 
+    },
+
     handleSubmit(keywords) {
         var self = this;
 
-        this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1, loading: true }, function(){
-            self.sendRequest();
-            if(self.state.saved) { self.saveSearch() }
+        this.setState({"keywords" : keywords, searchCount: this.state.searchCount += 1, loading: true}, function(){
+            self.props.handleSendRequest(self.state.keywords, self.handleResults);
+            if(self.state.saved) { self.saveSearch(); }
         });
-
     },
 
     handleSavedChange(val){
@@ -144,13 +127,65 @@ KijijiSearchFeature = React.createClass({
         });
     },
 
+    saveListing(keywords, url, title, image){
+        var searchId;
+
+        if( SavedSearches.findOne({keywords: keywords }) ){
+            searchId = SavedSearches.findOne({keywords: keywords })._id;
+        } else {
+            // Collection.insert returns the _id of the new record.
+            searchId = SavedSearches.insert({ keywords: keywords });
+        }
+
+        SavedAds.insert({
+            searchId: searchId,
+            title: title,
+            url: url,
+            image: image
+        });
+    },
+
     render() {
         return (
-            <div className="kijiji-search-feature row">
-                <h3> Kijiji Search </h3>
-                <SearchBar onKeywordSubmit={this.handleSubmit} saved={this.state.saved} handleSavedChange={this.handleSavedChange} />
-                <SearchResults results={this.state.searchResults} keywords={this.state.keywords} loading={this.state.loading} searchCount={this.state.searchCount} />
+            <div className="search-feature row">
+                <SearchBar
+                    onKeywordSubmit={this.handleSubmit}
+                    saved={this.state.saved}
+                    handleSavedChange={this.handleSavedChange}
+                />
+
+                { this.state.loading ?
+                    <Spinner /> :
+                    <SearchResults
+                        results={this.state.searchResults}
+                        keywords={this.state.keywords}
+                        searchCount={this.state.searchCount}
+                        handleSaveListing={this.saveListing}
+                    />
+                }
             </div>
         );
+    }
+});
+
+KijijiSearchFeature = React.createClass({
+
+    sendRequest(keywords, success) {
+        Meteor.call('KijijiSearch', keywords, success);
+    },
+
+    render() {
+        return (
+            <div className="kijiji-search-feature">
+                <h3> Kijiji Search </h3>
+                <SearchFeature handleSendRequest={this.sendRequest}/>
+            </div>
+        );
+    }
+});
+
+Spinner = React.createClass({
+    render() {
+        return <span className="glyphicon glyphicon-refresh spinning"></span>
     }
 });
